@@ -5,6 +5,8 @@ from bs4 import BeautifulSoup
 import re
 import os
 from sys import argv
+import time
+from random import randint
 
 
 def generate_header():
@@ -36,6 +38,7 @@ def to_tags(url):
     except ConnectionError:
         print('reading %s error' % url)
         pass
+    time.sleep(randint(1,4))
     return comment_tags
 
 
@@ -49,7 +52,6 @@ class Comment(object):
         self.url = self.get_url()
         self.id = self.tag.get('id')
         self.vote_lst = re.findall(r'\[\d.*?\]', tag.get_text())
-
         def vote_format(x): return int(x[1:-1])
         self.like = vote_format(self.vote_lst[0])
         self.unlike = vote_format(self.vote_lst[1])
