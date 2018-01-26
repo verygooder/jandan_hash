@@ -7,6 +7,7 @@ from sys import argv
 import time
 from random import randint
 from turn_hash import turn
+import sys
 
 
 def generate_header():
@@ -21,6 +22,37 @@ def generate_header():
         value = line[index + 2:]
         dic[key] = value
     return dic
+
+
+def get_key():
+    url = 'http://jandan.net/ooxx'
+    r = requests.get(url, headers=generate_header(), timeout=10)
+    if r.status_code == 200:
+        html = r.text
+        reg = r'<script.*?script>'
+        src = re.findall(reg, html)[5]
+        reg2 = r'cdn.*?js'
+        target = re.findall(reg2, src)
+        if target:
+            js_url = target[0]
+            js_url = 'http://' + js_url
+        return key_catch(js_url)
+    else:
+        print('cant read main page')
+        sys.exit()
+
+
+def key_catch(js_url):
+    r = requests.get(js_url, headers=generate_header(), timeout=10)
+    reg = r'e,".*?"'
+    lst = re.findall(reg, r.text)
+    if lst:
+        string = lst[-1]
+        result = string[3:-1]
+        return result
+    else:
+        print('cant recognize key')
+        sys.exit()
 
 
 def to_tags(url):
@@ -69,7 +101,7 @@ class Comment(object):
         result = 'http:' + result
         return result
         '''
-        result = turn(self.hash, 'wGGvZoAEW1BybIiO4t8gfBF1FvoHCGk8', '0')
+        result = turn(self.hash, key, '0')
         result = result[26:]
         result = 'http:' + result
         return result
@@ -121,6 +153,7 @@ def generate_a_page_html(index, pages_count, pics_in_the_page):
 if __name__ == "__main__":
     start = int(argv[1])
     end = int(argv[2])
+    key = get_key()
     url_head = 'http://jandan.net/ooxx/page-'
     url_tail = '#comments'
     url_lst = [url_head + str(i) + url_tail for i in range(start, end + 1)]
