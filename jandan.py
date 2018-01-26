@@ -3,10 +3,10 @@ import requests
 from requests import ConnectionError
 from bs4 import BeautifulSoup
 import re
-import os
 from sys import argv
 import time
 from random import randint
+from turn_hash import turn
 
 
 def generate_header():
@@ -38,7 +38,7 @@ def to_tags(url):
     except ConnectionError:
         print('reading %s error' % url)
         pass
-    time.sleep(randint(1,4))
+    time.sleep(randint(1, 4))
     return comment_tags
 
 
@@ -63,8 +63,14 @@ class Comment(object):
 
     def get_url(self):
         # 利用js脚本将hash转为图片url
+        '''
         command = 'node ./turn_url/turn_url.js %s' % self.hash
         result = os.popen(command).read().strip('\n')
+        result = 'http:' + result
+        return result
+        '''
+        result = turn(self.hash, 'wGGvZoAEW1BybIiO4t8gfBF1FvoHCGk8', '0')
+        result = result[26:]
         result = 'http:' + result
         return result
 
