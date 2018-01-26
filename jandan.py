@@ -80,8 +80,8 @@ class Comment(object):
     def __init__(self, tag):
         super(Comment, self).__init__()
         self.tag = tag
-        self.hash = self.tag.find('span', class_='img-hash').getText()
-        self.url = self.get_url()
+        self.hash_lst = self.tag.findAll('span', class_='img-hash')
+        self.url_lst = [self.get_url(i.getText()) for i in self.hash_lst]
         self.id = self.tag.get('id')
         self.vote_lst = re.findall(r'\[\d.*?\]', tag.get_text())
         def vote_format(x): return int(x[1:-1])
@@ -93,7 +93,7 @@ class Comment(object):
             self.rate = 0.01
         self.rate = round(self.rate, 2)
 
-    def get_url(self):
+    def get_url(self, hash_string):
         # 利用js脚本将hash转为图片url
         '''
         command = 'node ./turn_url/turn_url.js %s' % self.hash
@@ -101,18 +101,21 @@ class Comment(object):
         result = 'http:' + result
         return result
         '''
-        result = turn(self.hash, key, '0')
+        result = turn(hash_string, key, '0')
         result = result[26:]
         result = 'http:' + result
         return result
 
     def to_html_tag(self):
-        url = self.url
-        line1 = '<a target="_blank" href="%s">' % url
-        line2 = '<img src="%s", height="320">' % url
-        line3 = '%s ' % self.rate
-        line4 = '</a>'
-        result = ''.join([line1, line2, line3, line4])
+        # url = self.url
+        result = ''
+        for url in self.url_lst:
+            line1 = '<a target="_blank" href="%s">' % url
+            line2 = '<img src="%s", height="320">' % url
+            line3 = '%s ' % self.rate
+            line4 = '</a>'
+            combine = ''.join([line1, line2, line3, line4])
+            result += combine
         return result
 
     def __repr__(self):
