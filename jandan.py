@@ -92,6 +92,9 @@ class Comment(object):
         else:
             self.rate = 0.01
         self.rate = round(self.rate, 2)
+        self.valid = 0
+        if self.like + self.unlike >= 50:
+            self.valid = 1
 
     def get_url(self, hash_string):
         # 利用js脚本将hash转为图片url
@@ -165,6 +168,7 @@ if __name__ == "__main__":
         tags = to_tags(url)
         tag_lst += tags
     comments = [Comment(i) for i in tag_lst]
+    comments = [i for i in comments if i.valid]
     comments = sort_pics(comments)
     comments_divided_lst = divide_lst(comments)
     pages_count = len(comments_divided_lst)
