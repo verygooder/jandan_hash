@@ -97,15 +97,11 @@ class Comment(object):
             self.valid = 1
 
     def get_url(self, hash_string):
-        # 利用js脚本将hash转为图片url
-        '''
-        command = 'node ./turn_url/turn_url.js %s' % self.hash
-        result = os.popen(command).read().strip('\n')
-        result = 'http:' + result
-        return result
-        '''
         result = turn(hash_string, key, '0')
         result = result[26:]
+        tmp = result.split('/')
+        tmp[-2] = 'large'
+        result = '/'.join(tmp)
         result = 'http:' + result
         return result
 
