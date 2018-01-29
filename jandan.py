@@ -77,9 +77,10 @@ def to_tags(url):
 class Comment(object):
     """docstring for Comment"""
 
-    def __init__(self, tag):
+    def __init__(self, tag, page):
         super(Comment, self).__init__()
         self.tag = tag
+        self.page = str(page)
         self.hash_lst = self.tag.findAll('span', class_='img-hash')
         self.url_lst = [self.get_url(i.getText()) for i in self.hash_lst]
         self.id = self.tag.get('id')
@@ -91,7 +92,7 @@ class Comment(object):
             self.rate = self.like / (self.like + self.unlike) * 100
         else:
             self.rate = 0.01
-        self.rate = round(self.rate, 2)
+        self.rate = round(self.rate, 1)
         self.valid = 0
         if self.like + self.unlike >= 50:
             self.valid = 1
@@ -111,9 +112,10 @@ class Comment(object):
         for url in self.url_lst:
             line1 = '<a target="_blank" href="%s">' % url
             line2 = '<img src="%s", height="320">' % url
-            line3 = '%s ' % self.rate
+            line3 = '%s' % (self.rate)
             line4 = '</a>'
-            combine = ''.join([line1, line2, line3, line4])
+            line5 = '<a target="_blank" href="%s">p%s</a>' % ('http://jandan.net/ooxx/page-' + self.page + '#comments', self.page)
+            combine = ''.join([line1, line2, line3, line4, line5])
             result += combine
         return result
 
@@ -160,10 +162,14 @@ if __name__ == "__main__":
     url_tail = '#comments'
     url_lst = [url_head + str(i) + url_tail for i in range(start, end + 1)]
     tag_lst = []
+    page_count = start
+    comments = []
     for url in url_lst:
         tags = to_tags(url)
-        tag_lst += tags
-    comments = [Comment(i) for i in tag_lst]
+        # tag_lst += tags
+        comment_in_page = [Comment(i, page_count) for i in tags]
+        comments += comment_in_page
+        page_count += 1
     comments = [i for i in comments if i.valid]
     comments = sort_pics(comments)
     comments_divided_lst = divide_lst(comments)
