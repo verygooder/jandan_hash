@@ -24,13 +24,23 @@ def generate_header():
     return dic
 
 
-def get_key():
+def get_js_url():
     url = 'http://jandan.net/ooxx'
     r = requests.get(url, headers=generate_header(), timeout=10)
     if r.status_code == 200:
         html = r.text
         reg = r'<script.*?script>'
-        src = re.findall(reg, html)[5]
+        src_lst = re.findall(reg, html)
+        src = [i for i in src_lst if 'cdn.jandan.net/static/min/' in i]
+        if len(src) == 1:
+            url = re.findall(r'cdn.*?js', src[0])[0]
+            url = 'http://' + url
+            return url
+        else:
+            print('cant get js url')
+            sys.exit()
+
+        '''
         reg2 = r'cdn.*?js'
         target = re.findall(reg2, src)
         if target:
@@ -40,6 +50,7 @@ def get_key():
     else:
         print('cant read main page')
         sys.exit()
+        '''
 
 
 def key_catch(js_url):
@@ -157,7 +168,8 @@ def generate_a_page_html(index, pages_count, pics_in_the_page):
 if __name__ == "__main__":
     start = int(argv[1])
     end = int(argv[2])
-    key = get_key()
+    js_url = get_js_url()
+    key = key_catch(js_url)
     url_head = 'http://jandan.net/ooxx/page-'
     url_tail = '#comments'
     url_lst = [url_head + str(i) + url_tail for i in range(start, end + 1)]
