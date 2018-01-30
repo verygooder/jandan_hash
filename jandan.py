@@ -130,9 +130,9 @@ class Comment(object):
             line5 = '<a target="_blank" href="%s">p%s</a>' % ('http://jandan.net/ooxx/page-' + self.page + '#comments', self.page)
             combine = ''.join([line1, line2, line3, line4, line5])
             '''
-            line1 = '<li><a href="%s" target="_blank">' % ('http://jandan.net/ooxx/page-' + self.page + '#comments')
-            line2 = '<img src="%s", height="230"><br/>%s' % (url, self.rate)
-            line3 = '</a></li>'
+            line1 = '<li><a href="%s" target="_blank">' % (url)
+            line2 = '<img src="%s", height="230"><br/>%s  ' % (url, self.rate)
+            line3 = '</a><a href="%s">p%s</a></li>' % ('http://jandan.net/ooxx/page-' + self.page + '#comments', self.page)
             combine = ''.join([line1, line2, line3])
             result += combine
         return result
