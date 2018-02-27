@@ -24,5 +24,34 @@
     <div class="main">
         <page>
     </div>
+<script type="text/javascript">
+function getImgInfo(imgnode) {
+    height = imgnode.naturalHeight;
+    width = imgnode.naturalWidth;
+    result = height * width;
+    if (result >= 1024*768) {
+        return true;
+    } else {
+        return false;
+    };
+}
+
+function insertImgINfo(imgnode) {
+    text_node = imgnode.nextSibling.nextSibling;
+    text = text_node.textContent;
+    if (getImgInfo(imgnode)) {
+        text_node.textContent = 'B ' + text;
+    };
+}
+
+function run() {
+    var arr = document.getElementsByTagName('img');
+    for (var i of arr) {
+        insertImgINfo(i);
+    };
+}
+
+window.onload = run;
+</script>
 </body>
 </html>
