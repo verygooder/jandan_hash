@@ -31,7 +31,7 @@ function getImgInfo(imgnode) {
     result = height * width;
     if (result >= 1024*768) {
         return "B";
-    } else if ((800*600)<result<(1024*768)) {
+    } else if ((800*600)<result && result<(1024*768)) {
         return "M";
     } else {
         return "S";
@@ -41,7 +41,7 @@ function getImgInfo(imgnode) {
 function insertImgINfo(imgnode) {
     text_node = imgnode.nextSibling.nextSibling;
     text = text_node.textContent;
-    text_node.textContent = getImgInfo(imgnode) + text;
+    text_node.textContent = getImgInfo(imgnode) + " " + text;
 }
 
 function run() {
